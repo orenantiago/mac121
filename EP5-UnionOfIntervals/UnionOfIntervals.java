@@ -1,3 +1,4 @@
+
 /******************************************************************************
  *
  * MAC0121 - Algoritmos e Estruturas de Dados I
@@ -21,76 +22,77 @@ import java.awt.Color;
 
 public class UnionOfIntervals {
 
-	/*
-		recebe um vetor de intervalos ordenados, coloca nele o grupo
-		a união dos intervalos, e retorna um vetor de doubles com
-		[numero de intervalos, tamanho total]
-	*/
-	public static double[] joinIntervals(Interval1D [] input) {
-		double [] output = new double [2];
+	public static void main(String[] args) {
+
+		boolean verbose = (args.length > 0) ? true : false;
+		String[] lines = StdIn.readAllLines();
+
+		Interval1D[] intervals = new Interval1D[lines.length];
+
+		for (int i = 0; i < lines.length; i++) {
+			String[] line = lines[i].split("[^0-9.]+");
+			double n1 = Double.parseDouble(line[0]);
+			double n2 = Double.parseDouble(line[1]);
+			intervals[i] = (n1 < n2) ? new Interval1D(n1, n2) : new Interval1D(n2, n1);
+		}
+
+		Arrays.sort(intervals, Interval1D.MIN_ENDPOINT_ORDER);
+		Interval1D[] unionIntervals = new Interval1D[lines.length];
+
 		int k, i;
-		for (k = 0, i = 0; i < input.length; k++) 
-		{
+		double length = 0;
+		for (k = 0, i = 0; i < intervals.length; k++) {
 			int j = i + 1;
-			double min = input[i].min(), max = input[i].max();
+			double min = intervals[i].min(), max = intervals[i].max();
 
 			Interval1D aux = new Interval1D(min, max);
 
-			while(j < input.length && aux.intersects(input[j])) {
-				if(input[j].max() > aux.max())
-					max = input[j].max();
-				else
-					max = aux.max();
+			while (j < intervals.length && aux.intersects(intervals[j])) {
+				max = (intervals[j].max() > aux.max()) ? intervals[j].max() : aux.max();
 				aux = new Interval1D(min, max);
 				j++;
 			}
 
 			i = j;
-			input[k] = new Interval1D(min, max);
-			output[1] = max - min;
-		}
-		output[0] = k;
-		return output;
-
-	}
-
-    public static void main(String [] args) {
-
-    	boolean verbose = (args.length > 0) ? true : false;
-		String [] lines = StdIn.readAllLines();
-
-		Interval1D[] intervals = new Interval1D[lines.length];
-		Interval1D[] unionIntervals = new Interval1D[lines.length];
-
-		for (int i = 0; i < lines.length; i++) {
-			String [] aux = lines[i].split("[^0-9.]+");
-			intervals[i] = new Interval1D(Double.parseDouble(aux[0]),Double.parseDouble(aux[1]));
-			unionIntervals[i] = new Interval1D(Double.parseDouble(aux[0]),Double.parseDouble(aux[1]));
+			unionIntervals[k] = new Interval1D(min, max);
+			length = max - min;
 		}
 
 
-		Arrays.sort(unionIntervals, Interval1D.MIN_ENDPOINT_ORDER);
-		double [] total = joinIntervals(unionIntervals);
-		int components = (int) total[0];
-
+		StdOut.println("Total length: " + length + " [" + k + " components]");
 		
-		StdDraw.setXscale(0, 60);
-        StdDraw.setYscale(0, 60);
-        StdDraw.setPenColor(StdDraw.RED);
-        //(x,y,x,y)
-        StdDraw.line(0, 3, 60, 3);
-        StdDraw.show();
-			
+		// Desenhando os intervalos
+		if(verbose && intervals.length <= 60){
+			StdDraw.setXscale(0, 16);
+			StdDraw.setYscale(0, 16);
 
-		StdOut.println("Total length: " + total[1] + " ["+ components + " components]");
-		
-		if (verbose)
-			for(int i = 0; i < intervals.length; i++){
+			double min = unionIntervals[0].min();
+			double max = unionIntervals[k - 1].max();
+			double delta = max - min;
+			for (i = 0; i < intervals.length; i++) {
+				double x0 = (14 * (intervals[i].min() - min)) / delta + 1;
+				double x1 = (14 * (intervals[i].max() - min)) / delta + 1;
 
-				//imprimindo os intervalos da união
-				StdOut.println(unionIntervals[i].toString());
+				StdDraw.setPenRadius(0.005);
+				StdDraw.setPenColor(StdDraw.BLACK);
+				StdDraw.line(x0, 0.15 * i + 1, x1, 0.15 * i + 1);
+
+				StdDraw.setPenRadius(0.0025);
+				StdDraw.setPenColor(StdDraw.LIGHT_GRAY);
+				StdDraw.line(x0, 0, x0, 16);
+				StdDraw.line(x1, 0, x1, 16);
+
+				if (i < k) {
+					x0 = (14 * (unionIntervals[i].min() - min)) / delta + 1;
+					x1 = (14 * (unionIntervals[i].max() - min)) / delta + 1;
+
+					StdDraw.setPenRadius(0.005);
+					StdDraw.setPenColor(StdDraw.RED);
+					StdDraw.line(x0, 0.24 * intervals.length + 1, x1, 0.24 * intervals.length + 1);
+
+					StdOut.println(unionIntervals[i].toString());
+				}
 			}
-
-		
+		}
 	}
 }
