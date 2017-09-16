@@ -1,36 +1,55 @@
+/******************************************************************************
+ *
+ * MAC0121 - Algoritmos e Estruturas de Dados I
+ * Aluno: Renan Tiago dos Santos Silva
+ * Numero USP: 9793606
+ * Tarefa: Anagrams
+ * Data: 15/09/2017
+ *
+ *
+ * DECLARO QUE SOU O ÚNICO AUTOR E RESPONSÁVEL POR ESTE PROGRAMA.  TODAS AS
+ * PARTES DO PROGRAMA, EXCETO AS QUE SÃO BASEADAS EM MATERIAL FORNECIDO
+ * PELO PROFESSOR OU COPIADAS DO LIVRO OU DAS BIBLIOTECAS DE SEDGEWICK & WAYNE,
+ * FORAM DESENVOLVIDAS POR MIM.  DECLARO TAMBÉM QUE SOU RESPONSÁVEL POR TODAS
+ * AS CÓPIAS DESTE PROGRAMA E QUE NÃO DISTRIBUÍ NEM FACILITEI A DISTRIBUIÇÃO
+ * DE CÓPIAS DESTA PROGRAMA.
+ *
+ ******************************************************************************/
+
 import java.util.Arrays;
 
 public class Anagrams {
 	public static void main(String[] args) {
 		String [] palavras = StdIn.readAllLines(); 
-		Mapa [] tabela = new Mapa [palavras.length];
+		Mapa [] mapa = new Mapa [palavras.length];
 		
 		for(int i = 0; i < palavras.length; i++) {
-			tabela[i] = new Mapa(palavras[i]);
+			mapa[i] = new Mapa(palavras[i]);
 		}
 
-		Arrays.sort(tabela, Mapa.ORDEM_CHAVE);
+		Arrays.sort(mapa, Mapa.ORDEM_CHAVE);
 
-		int i = 0;
-		while(i < tabela.length - 1) {
+		imprimeAnagramas(mapa);
+	}
+
+	public static void imprimeAnagramas(Mapa [] mapa) {
+		
+		for(int i = 0; i < mapa.length - 1; i++) {
+
 			boolean linhaNova = true;
-			while(tabela[i].chaveIgual(tabela[i + 1]) && i < tabela.length - 1) {
-				
-				if(!tabela[i].valorIgual(tabela[i + 1])) {
+			
+			for(;mapa[i].chaveIgual(mapa[i + 1]) && i < mapa.length - 1; i++) {	
+				if(!mapa[i].valorIgual(mapa[i + 1])) {
 					if(linhaNova) {
-						StdOut.print("\n* " + tabela[i] + " ");
+						StdOut.print("\n* " + mapa[i] + " ");
 						linhaNova = false;
 					}
-					StdOut.print(tabela[i + 1] + " ");
+					StdOut.print(mapa[i + 1] + " ");
 				}
-
-				i++;
 			}
-			i++;
 		}
 
 		StdOut.println();
-
 	}
 
 	
