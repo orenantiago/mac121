@@ -4,7 +4,7 @@
  * Aluno: Renan Tiago dos Santos Silva
  * Numero USP: 9793606
  * Tarefa: Variante do Web Exercise 2.5.13 (Sorting with many duplicates)
- * Data: 10/08/2017
+ * Data: 03/10/2017
  *
  * O programa funciona bem com duplicatas porque, por ele ser 3-Way partitioning,
  * ele evita fazer trocas desnecessárias quando lidando com um elemento igual ao
@@ -31,21 +31,21 @@ public class DuplicateSort {
         sort(a, 0, a.length - 1);
     }
 
-    private static void sort(Comparable[] array, int low, int hi) {
+    public static void sort(Comparable[] array, int low, int hi) {
         if (hi <= low) return;
-        int i = low, lt = low, gt = hi;
+        int i = low, j = low, k = hi;
 
         // a[low] é o pivô das comparações.
         Comparable pivot = array[low];
-        while (i <= gt) {
+        while (i <= k) {
             int compare = array[i].compareTo(pivot);
             if (compare < 0) {
-                swap(array, lt, i);
-                lt++; i++;
+                swap(array, j, i);
+                j++; i++;
             }
             else if (compare > 0) {
-                swap(array, i, gt);
-                gt--;
+                swap(array, i, k);
+                k--;
             }
             // se o valor a ser comparado for igual ao pivô, apenas incremento i.
             else
@@ -54,8 +54,8 @@ public class DuplicateSort {
 
         /* chamadas recursivas para as duas partes que ainda não foram
          * ordenadas */
-        sort(array, low, lt-1);
-        sort(array, gt+1, hi);
+        sort(array, low, j-1);
+        sort(array, k+1, hi);
     }
 
     private static void swap(Comparable[] a, int i, int j) {
