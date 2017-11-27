@@ -3,5 +3,33 @@ public class Clairvoyant {
     boolean verbose = args.length > 1;
     int cacheSize = Integer.valueOf(args[0]);
     IndexMaxPQ<String> cache = new IndexMaxPQ<String>(cacheSize);
+    // Integer i = 0;
+
+    // testes
+    for(Integer i = 0; cache.size() < cacheSize; i++) {
+      cache.insert(i, i.toString());
+    }
+    while(!cache.isEmpty()) {
+      StdOut.println(cache.delMax());
+    }
+
+    // implementação
+    Integer priority;
+    String[] in = StdIn.readAllStrings();
+    for(Integer i = 0; i < in.length - 1; i++) {
+      // StdOut.println(in[i]);
+      Integer priority;
+      for(priority = i + 1; priority < in.length && in[priority] != in[i]; priority++);
+      if(cache.size() < cacheSize - 2) {
+        StdOut.println(cache.size());
+        cache.insert(priority, in[i]);
+      //   if(verbose) {
+      //     StdOut.println(in[i] + ": +" + in[i]);
+      //   }
+      }
+
+    }
+
+
   }
 }
