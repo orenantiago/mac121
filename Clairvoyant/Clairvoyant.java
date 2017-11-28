@@ -17,11 +17,12 @@ public class Clairvoyant {
     String[] in = StdIn.readAllStrings();
 
     BST indexes = new BST();
-    for(String word : in)
-      indexes.add(word);
-      
-    for(Integer i = 0; i < in.length - 1; i++) {
+    for(Integer i = 0; i < in.length; i++)
+      indexes.add(in[i], i);
+
+    for(Integer i = 0; i < in.length; i++) {
       // StdOut.println(in[i]);
+
       Integer priority;
       for(priority = i + 1; priority < in.length && in[priority] != in[i]; priority++);
       if(cache.size() < cacheSize - 2) {
