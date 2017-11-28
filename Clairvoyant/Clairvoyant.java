@@ -6,16 +6,20 @@ public class Clairvoyant {
     // Integer i = 0;
 
     // testes
-    for(Integer i = 0; cache.size() < cacheSize; i++) {
-      cache.insert(i, i.toString());
-    }
-    while(!cache.isEmpty()) {
-      StdOut.println(cache.delMax());
-    }
+    // for(Integer i = 0; cache.size() < cacheSize; i++) {
+    //   cache.insert(i, i.toString());
+    // }
+    // while(!cache.isEmpty()) {
+    //   StdOut.println(cache.delMax());
+    // }
 
     // implementação
-    Integer priority;
     String[] in = StdIn.readAllStrings();
+
+    BST indexes = new BST();
+    for(String word : in)
+      indexes.add(word);
+      
     for(Integer i = 0; i < in.length - 1; i++) {
       // StdOut.println(in[i]);
       Integer priority;
