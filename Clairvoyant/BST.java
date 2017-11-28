@@ -19,6 +19,14 @@ public class BST {
     public Integer get() {
       if(!indexes.isEmpty()) {
         Integer index = indexes.get(0);
+        return index;
+      }
+      else
+        return null;
+    }
+    public Integer removeIndex() {
+      if(!indexes.isEmpty()) {
+        Integer index = indexes.get(0);
         indexes.remove(0);
         return index;
       }
@@ -45,11 +53,16 @@ public class BST {
     return root;
   }
 
+  public boolean contains(String key) {
+    return get(key) != null;
+  }
+
   public Integer get(String key) {
     return get(root, key);
   }
 
   private Integer get(Node root, String key) {
+    if (root == null) return null;
     int compare = key.compareTo(root.key);
     if (compare < 0)
       return get(root.left, key);
@@ -59,21 +72,74 @@ public class BST {
       return root.get();
   }
 
+  public Integer removeIndex(String key) {
+    return removeIndex(root, key);
+  }
+
+  private Integer removeIndex(Node root, String key) {
+    if (root == null) return null;
+    int compare = key.compareTo(root.key);
+    if (compare < 0)
+      return get(root.left, key);
+    else if (compare > 0)
+      return get(root.right, key);
+    else
+      return root.removeIndex();
+  }
+
+  public void delete(String key) {
+      root = delete(root, key);
+  }
+
+  private Node delete(Node x, String key) {
+      if (x == null) return null;
+
+      int cmp = key.compareTo(x.key);
+      if      (cmp < 0) x.left  = delete(x.left,  key);
+      else if (cmp > 0) x.right = delete(x.right, key);
+      else {
+          if (x.right == null) return x.left;
+          if (x.left  == null) return x.right;
+          Node t = x;
+          x = min(t.right);
+          x.right = deleteMin(t.right);
+          x.left = t.left;
+      }
+      x.size = size(x.left) + size(x.right) + 1;
+      return x;
+  }
+
+  private int size(Node x) {
+      if (x == null) return 0;
+      else return x.size;
+  }
+
+  private Node min(Node x) {
+      if (x.left == null) return x;
+      else                return min(x.left);
+  }
+
+  public void deleteMin() {
+      root = deleteMin(root);
+  }
+
+  private Node deleteMin(Node x) {
+      if (x.left == null) return x.right;
+      x.left = deleteMin(x.left);
+      x.size = size(x.left) + size(x.right) + 1;
+      return x;
+  }
+
   public static void main(String[] args) {
     BST bst = new BST();
     String a = "abc";
     String b = "cu";
     bst.put(a, 1);
-    bst.put(a, 2);
+    bst.put("abc", 2);
     bst.put(a, 3);
-    bst.put(b, 2);
-    bst.put(b, 2);
-    bst.put(b, 3);
-    StdOut.println(bst.get(a));
-    StdOut.println(bst.get(a));
-    StdOut.println(bst.get(a));
-    StdOut.println(bst.get(b));
-    StdOut.println(bst.get(b));
-    StdOut.println(bst.get(b));
+    bst.put(b, 12);
+      StdOut.println(bst.removeIndex(a));
+StdOut.println(bst.removeIndex(b));
+StdOut.println(bst.removeIndex(a));
   }
 }
