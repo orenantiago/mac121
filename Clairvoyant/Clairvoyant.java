@@ -1,3 +1,20 @@
+/******************************************************************************
+ *
+ * MAC0121 - Algoritmos e Estruturas de Dados I
+ * Aluno: Renan Tiago dos Santos Silva
+ * Numero USP: 9793606
+ * Tarefa: Clairvoyant
+ * Data: 28/11/2017
+ *
+ *
+ * DECLARO QUE SOU O ÚNICO AUTOR E RESPONSÁVEL POR ESTE PROGRAMA.  TODAS AS
+ * PARTES DO PROGRAMA, EXCETO AS QUE SÃO BASEADAS EM MATERIAL FORNECIDO
+ * PELO PROFESSOR OU COPIADAS DO LIVRO OU DAS BIBLIOTECAS DE SEDGEWICK & WAYNE,
+ * FORAM DESENVOLVIDAS POR MIM.  DECLARO TAMBÉM QUE SOU RESPONSÁVEL POR TODAS
+ * AS CÓPIAS DESTE PROGRAMA E QUE NÃO DISTRIBUÍ NEM FACILITEI A DISTRIBUIÇÃO
+ * DE CÓPIAS DESTA PROGRAMA.
+ *
+ ******************************************************************************/
 public class Clairvoyant {
   public static void putST(ST<String, Queue<Integer>> st, String in, Integer index) {
     Queue<Integer> aux;
@@ -27,20 +44,8 @@ public class Clairvoyant {
   public static void main(String[] args) {
     boolean verbose = args.length > 1;
     int cacheSize = Integer.valueOf(args[0]);
-    // IndexMaxPQ<Item> cache = new IndexMaxPQ<Item>(cacheSize);
-    // Integer i = 0;
 
-    // testes
-    // for(Integer i = 0; cache.size() < cacheSize; i++) {
-    //   cache.insert(i, i.toString());
-    // }
-    // while(!cache.isEmpty()) {
-    //   StdOut.println(cache.delMax());
-    // }
-
-    // implementação
     String[] in = StdIn.readAllStrings();
-    Stack<Integer>aux;
     ST<String, Queue<Integer>> indexes = new ST<String, Queue<Integer>>();
     for(Integer i = 0; i < in.length; i++) {
       putST(indexes, in[i], i);
@@ -52,13 +57,15 @@ public class Clairvoyant {
     int c = 0;
     Integer index;
     for(Integer i = 0; i < in.length; i++) {
-      if(cache.size() < cacheSize) {
-        // occurred.put(in[i], i);
+      if(cache.size() < cacheSize && !occurred.contains(in[i])) {
         putST(occurred, in[i], i);
         cache.insert(c, in[i]);
         index = get(indexes, in[i]);
         if(index == i) index = get(indexes, in[i]);
-        nextOccurrence.insert(c, index);
+        if(index != null)
+          nextOccurrence.insert(c, index);
+        else
+          nextOccurrence.insert(c, in.length);
         c++;
         if(verbose) {
           StdOut.println(in[i] + ": +" + in[i]);
@@ -66,6 +73,18 @@ public class Clairvoyant {
       }
       // se já tiver aparecido
       else if(occurred.contains(in[i])) {
+        boolean ok = true;
+        for(Integer j = 0; j < cache.size() && ok; j++) {
+          if(cache.keyOf(j).compareTo(in[i]) == 0) {
+            index = get(indexes, in[i]);
+            if(index == i) index = get(indexes, in[i]);
+            if(index == null)
+              nextOccurrence.changeKey(j, in.length + 1);
+            else
+              nextOccurrence.changeKey(j, index);
+            break;
+          }
+        }
         if(verbose) {
           StdOut.println(in[i] + ": in cache");
         }
@@ -83,8 +102,6 @@ public class Clairvoyant {
         putST(occurred, in[i], i);
         index = get(indexes, word);
         if(index == i) index = get(indexes, in[i]);
-        // atualiza o cache e as proximas ocorrencias
-        // se não tiver mais proxima ocorrencia dessa string, coloca uma prioridade grande
         if(index == null)
           nextOccurrence.insert(j, in.length);
         else
