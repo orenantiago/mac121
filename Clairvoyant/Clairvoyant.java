@@ -1,6 +1,28 @@
 public class Clairvoyant {
-  private class Item {
-
+  public static void putST(ST<String, Queue<Integer>> st, String in, Integer index) {
+    Queue<Integer> aux;
+    if(st.contains(in)) {
+      aux = st.get(in);
+      aux.enqueue(index);
+      st.put(in, aux);
+    }
+    else {
+      aux = new Queue<Integer>();
+      aux.enqueue(index);
+      st.put(in, aux);
+    }
+  }
+  public static Integer get(ST<String, Queue<Integer>> st, String in) {
+    Queue<Integer> q;
+    if(st.contains(in)) {
+      q = st.get(in);
+      if(!q.isEmpty()) {
+        Integer i = q.dequeue();
+        st.put(in, q);
+        return i;
+      }
+    }
+    return null;
   }
   public static void main(String[] args) {
     boolean verbose = args.length > 1;
@@ -18,26 +40,24 @@ public class Clairvoyant {
 
     // implementação
     String[] in = StdIn.readAllStrings();
-
-    BST indexes = new BST();
+    Stack<Integer>aux;
+    ST<String, Queue<Integer>> indexes = new ST<String, Queue<Integer>>();
     for(Integer i = 0; i < in.length; i++) {
-      // StdOut.println(in[i] + " " + i);
-      indexes.put(in[i], i);
+      putST(indexes, in[i], i);
     }
-    // BST que guarda o que já ocorreu
-    BST occurred = new BST();
+    // ST que guarda o que já ocorreu
+    ST<String, Queue<Integer>> occurred = new ST<String, Queue<Integer>>();
     IndexMaxPQ <String>cache = new IndexMaxPQ<String>(cacheSize);
     IndexMaxPQ <Integer>nextOccurrence = new IndexMaxPQ<Integer>(cacheSize);
     int c = 0;
     Integer index;
     for(Integer i = 0; i < in.length; i++) {
       if(cache.size() < cacheSize) {
-        occurred.put(in[i], i);
+        // occurred.put(in[i], i);
+        putST(occurred, in[i], i);
         cache.insert(c, in[i]);
-        index = indexes.removeIndex(in[i]);
-        StdOut.println(in[i] + " " + index);
-        if(index == i) index = indexes.removeIndex(in[i]);
-        StdOut.println(in[i] + " " + index);
+        index = get(indexes, in[i]);
+        if(index == i) index = get(indexes, in[i]);
         nextOccurrence.insert(c, index);
         c++;
         if(verbose) {
@@ -58,10 +78,11 @@ public class Clairvoyant {
           StdOut.println(in[i] + ": -"+ word + "/+" + in[i]);
         }
 
-        occurred.delete(word);
-        occurred.put(in[i], i);
-        index = indexes.removeIndex(word);
-        if(index == i) index = indexes.removeIndex(in[i]);
+        occurred.remove(word);
+        putST(occurred, in[i], i);
+        putST(occurred, in[i], i);
+        index = get(indexes, word);
+        if(index == i) index = get(indexes, in[i]);
         // atualiza o cache e as proximas ocorrencias
         // se não tiver mais proxima ocorrencia dessa string, coloca uma prioridade grande
         if(index == null)
