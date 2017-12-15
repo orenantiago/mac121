@@ -17,14 +17,15 @@ public class MarkovDeluxe {
     }
     return rank;
   }
+
   public static void main(String[] args) {
     In in0 = new In(args[0]);
     String split = args[1];
     double probability = Double.parseDouble(args[2]);
     Integer executions = Integer.parseInt(args[3]);
     boolean verbose = args.length > 4;
-    // SymbolDigraph teste = new SymbolDigraph(args[0], split);
-    // StdOut.println(teste);
+    // contém as strings que compõe os vértices e os ints associados a elas
+    SymbolDigraph dictionary = new SymbolDigraph(args[0], split);
 
 
     String [] connections  = in0.readAllLines();
@@ -37,10 +38,11 @@ public class MarkovDeluxe {
     SparseVector inDegree = new SparseVector(n);
     for(String connection : connections) {
       String[] aux = connection.split(split);
-      Integer x = Integer.parseInt(aux[0]);
+      //      Integer x = dictionary.index(aux[0]);
+      Integer x = dictionary.index(aux[0]);
       for(int i = 1; i < aux.length; i++) {
-        Integer y = Integer.parseInt(aux[i]);
-
+        // Integer y = Integer.parseInt(aux[i]);
+        Integer y = dictionary.index(aux[i]);
         double occurrence = transitionMatrix.get(x, y);
         double outOccurrence = outDegree.get(x);
         double inOccurrence = inDegree.get(y);
@@ -60,16 +62,17 @@ public class MarkovDeluxe {
         transitionMatrix.put(i, j, p);
       }
     }
+
     // Computando o pagerank
     SparseVector rank = new SparseVector(n);
     rank.put(0, 1.0);
     rank = pageRank(transitionMatrix, rank, n, executions);
     if(!verbose)
-      for(int i = 0; i < n; i++) StdOut.printf("%5.9f %2d\n", rank.get(i), i);
+      for(int i = 0; i < n; i++) StdOut.printf("%5.9f %s\n", rank.get(i), dictionary.nameOf(i));
     else{
       SparseVector newRank = pageRank(transitionMatrix, rank, n, 1);
       for(int i = 0; i < n; i++) {
-        StdOut.printf("%5.9f %5.9f %5.0f %2d\n", rank.get(i), newRank.get(i), inDegree.get(i), i);
+        StdOut.printf("%5.9f %5.9f %d %s\n", rank.get(i), newRank.get(i), (int)inDegree.get(i), dictionary.nameOf(i));
       }
     }
   }
