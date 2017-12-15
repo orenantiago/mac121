@@ -29,7 +29,7 @@ public class MarkovDeluxe {
 
 
     String [] connections  = in0.readAllLines();
-    int n = connections.length;
+    int n = dictionary.digraph().V();
 
 
     // criando a matriz de transição
